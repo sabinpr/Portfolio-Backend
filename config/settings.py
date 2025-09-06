@@ -1,6 +1,7 @@
 from decouple import config
 from pathlib import Path
 import dj_database_url
+from decouple import Csv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -80,13 +83,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Database (Railway)
 DATABASES = {
-    "default": dj_database_url.config(
-        default=config("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
-    )
+    "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
 
 
 # Email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST")
 EMAIL_PORT = config("EMAIL_PORT", cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
@@ -94,6 +96,7 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 ADMIN_EMAIL = config("ADMIN_EMAIL")
+
 
 CORS_ALLOWED_ORIGINS = [
     "https://my-portfolio-rho-bay-gr3zwm7m0v.vercel.app",  # your Vercel frontend
@@ -104,7 +107,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://portfolio-backend-production-d840.up.railway.app",
     "https://my-portfolio-rho-bay-gr3zwm7m0v.vercel.app",
     "https://www.sabinprajapati7.com.np",
-    "http://localhost:8000",  # keep local dev
+    "http://localhost:8000",
 ]
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

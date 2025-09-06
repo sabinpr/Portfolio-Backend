@@ -7,6 +7,24 @@ from threading import Thread
 from .models import ContactMessage
 from .serializers import ContactMessageSerializer
 
+from django.http import JsonResponse
+
+# Test email function
+
+
+def test_email(request):
+    try:
+        send_mail(
+            "Django Email Test",
+            "If you got this, your SMTP is working!",
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.ADMIN_EMAIL],
+            fail_silently=False,
+        )
+        return JsonResponse({"status": "success", "message": "Email sent!"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+
 
 # Function to send email in the background
 def send_contact_email(contact):
