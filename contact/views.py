@@ -26,6 +26,7 @@ class ContactMessageCreateView(generics.CreateAPIView):
                 recipient_list=[os.getenv("ADMIN_EMAIL", settings.DEFAULT_FROM_EMAIL)],
                 fail_silently=False,
             )
+
         except Exception as e:
             print("⚠️ Email failed:", e)
 
