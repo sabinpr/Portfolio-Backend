@@ -109,3 +109,15 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.sabinprajapati7.com.np",
     "http://localhost:8000",
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "INFO"},
+        "contact": {"handlers": ["console"], "level": "INFO"},
+    },
+}
