@@ -85,3 +85,8 @@ DATABASES = {
         default=config("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
     )
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://portfolio-backend-production-d840.up.railway.app",
+    "http://localhost:8000",
+]
