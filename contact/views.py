@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from threading import Thread
 import logging
+from django.core.mail import EmailMessage
 
 from .models import ContactMessage
 from .serializers import ContactMessageSerializer
@@ -13,17 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 def send_contact_email(contact):
-    """
-    Sends contact email asynchronously.
-    """
     try:
-        send_mail(
+        email = EmailMessage(
             subject=f"New contact from {contact.name}",
-            message=f"Message:\n{contact.message}\nEmail: {contact.email}",
+            body=f"Message:\n{contact.message}\nEmail: {contact.email}",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[settings.ADMIN_EMAIL],
-            fail_silently=False,
+            to=[settings.ADMIN_EMAIL],
         )
+        email.send(fail_silently=False)
         logger.info("✅ Email sent successfully for contact ID: %s", contact.id)
     except Exception as e:
         logger.error("⚠️ Email failed for contact ID %s: %s", contact.id, e)
