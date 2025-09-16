@@ -132,9 +132,10 @@ ADMIN_EMAIL = config("ADMIN_EMAIL", default=None)
 # ------------------------
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="https://my-portfolio-rho-bay-gr3zwm7m0v.vercel.app,https://www.sabinprajapati7.com.np",
+    default="http://localhost:5173,https://my-portfolio-rho-bay-gr3zwm7m0v.vercel.app,https://www.sabinprajapati7.com.np",
     cast=Csv(),
 )
+
 
 # ------------------------
 # LOGGING
