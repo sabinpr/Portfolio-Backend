@@ -19,7 +19,7 @@ def send_contact_email(contact):
             subject=f"New contact from {contact.name}",
             body=f"Message:\n{contact.message}\nEmail: {contact.email}",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[settings.ADMIN_EMAIL],
+            to=[settings.ADMIN_EMAIL, settings.NABIN_ADMIN_EMAIL],
         )
         email.send(fail_silently=False)
         logger.info("✅ Email sent successfully for contact ID: %s", contact.id)
