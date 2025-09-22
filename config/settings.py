@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "contact",
     "contactnabin",
+    "contactishu",
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,8 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
 EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 ADMIN_EMAIL = config("ADMIN_EMAIL", default=None)
+NABIN_ADMIN_EMAIL = config("NABIN_ADMIN_EMAIL", default=None)
+ISHU_ADMIN_EMAIL = config("ISHU_ADMIN_EMAIL", default=None)
 
 # ------------------------
 # CORS

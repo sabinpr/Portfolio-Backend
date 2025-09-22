@@ -52,22 +52,3 @@ class ContactMessageCreateView(generics.CreateAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
-
-
-@api_view(["GET"])
-def test_email(request):
-    """
-    Simple endpoint to test email functionality.
-    """
-    try:
-        send_mail(
-            "Test Email",
-            "If you got this, your SMTP works!",
-            settings.DEFAULT_FROM_EMAIL,
-            [settings.ADMIN_EMAIL],
-            fail_silently=False,
-        )
-        return Response({"status": "success", "message": "Email sent!"})
-    except Exception as e:
-        logger.error("Test email failed: %s", e)
-        return Response({"status": "error", "message": str(e)}, status=500)
