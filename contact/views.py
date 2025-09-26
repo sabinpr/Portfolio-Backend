@@ -1,11 +1,11 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.core.mail import send_mail
 from django.conf import settings
 from threading import Thread
 import logging
-from django.core.mail import EmailMessage
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 from .models import ContactMessage
 from .serializers import ContactMessageSerializer
@@ -13,31 +13,41 @@ from .serializers import ContactMessageSerializer
 logger = logging.getLogger(__name__)
 
 
+# ----------------------------
+# Function to send email via SendGrid
+# ----------------------------
 def send_contact_email(contact):
+    """
+    Send contact email asynchronously using SendGrid
+    """
     try:
-        email = EmailMessage(
+        message = Mail(
+            from_email=settings.DEFAULT_FROM_EMAIL,  # must be verified in SendGrid
+            to_emails=settings.ADMIN_EMAIL,  # recipient email
             subject=f"New contact from {contact.name}",
-            body=f"Message:\n{contact.message}\nEmail: {contact.email}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[settings.ADMIN_EMAIL],
+            html_content=f"<p>{contact.message}</p><p>Email: {contact.email}</p>",
         )
-        email.send(fail_silently=False)
-        logger.info("✅ Email sent successfully for contact ID: %s", contact.id)
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        response = sg.send(message)
+        logger.info(
+            "✅ Contact email sent for contact ID %s. Status code: %s",
+            contact.id,
+            response.status_code,
+        )
     except Exception as e:
-        logger.error("⚠️ Email failed for contact ID %s: %s", contact.id, e)
+        logger.error("⚠️ Failed to send contact email for ID %s: %s", contact.id, str(e))
 
 
+# ----------------------------
+# ContactMessage Create API
+# ----------------------------
 class ContactMessageCreateView(generics.CreateAPIView):
-    """
-    API view to create a contact message and send an email asynchronously.
-    """
-
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
 
     def perform_create(self, serializer):
         contact = serializer.save()
-        # Use daemon thread to avoid blocking response
+        # Send email in a separate thread to avoid blocking
         Thread(target=send_contact_email, args=(contact,), daemon=True).start()
         return contact
 
@@ -54,20 +64,25 @@ class ContactMessageCreateView(generics.CreateAPIView):
         )
 
 
+# ----------------------------
+# Test SendGrid Email API
+# ----------------------------
 @api_view(["GET"])
 def test_email(request):
     """
-    Simple endpoint to test email functionality.
+    Test endpoint for SendGrid email functionality
     """
     try:
-        send_mail(
-            "Test Email",
-            "If you got this, your SMTP works!",
-            settings.DEFAULT_FROM_EMAIL,
-            [settings.ADMIN_EMAIL],
-            fail_silently=False,
+        message = Mail(
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to_emails=settings.ADMIN_EMAIL,
+            subject="Test Email from Django",
+            html_content="<p>If you see this, SendGrid is working ✅</p>",
         )
-        return Response({"status": "success", "message": "Email sent!"})
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        response = sg.send(message)
+        logger.info("✅ Test email sent! Status code: %s", response.status_code)
+        return Response({"status": "success", "code": response.status_code})
     except Exception as e:
-        logger.error("Test email failed: %s", e)
+        logger.error("⚠️ Test email failed: %s", str(e))
         return Response({"status": "error", "message": str(e)}, status=500)
