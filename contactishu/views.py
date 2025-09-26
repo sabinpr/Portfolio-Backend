@@ -23,10 +23,7 @@ def send_contact_email(contact):
     try:
         message = Mail(
             from_email=settings.DEFAULT_FROM_EMAIL,  # must be verified in SendGrid
-            to_emails=[
-                settings.ADMIN_EMAIL,
-                settings.ISHU_ADMIN_EMAIL,
-            ],  # recipient email
+            to_emails=settings.ISHU_ADMIN_EMAIL,  # recipient email
             subject=f"New contact from {contact.name}",
             html_content=f"<p>{contact.message}</p><p>Email: {contact.email}</p>",
         )

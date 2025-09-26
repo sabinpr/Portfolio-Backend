@@ -171,3 +171,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SENDGRID API
 SENDGRID_API_KEY = config("SENDGRID_API_KEY")
+ 
