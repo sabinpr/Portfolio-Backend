@@ -169,9 +169,5 @@ LOGGING = {
 # ------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# resend Api
-RESEND_API_KEY = config("RESEND_API_KEY")
-RESEND_FROM_EMAIL = config("RESEND_FROM_EMAIL")
-RESEND_ADMIN_EMAIL = config("RESEND_ADMIN_EMAIL")
-
+# SENDGRID API
 SENDGRID_API_KEY = config("SENDGRID_API_KEY")
